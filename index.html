@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>electron-tabs-demo</title>
+  </head>
+  <body style="margin: 0">
+    <tab-group sortable="true">
+      <style>
+        .nav {
+          --tabgroup-background: #0f0e0e;
+          --tab-active-background: #0f0e0e;
+          --tab-background: #0f0e0e;
+          --tab-active-color: #fff;
+          --tab-hover-color: #fff;
+          --tab-border-color: transparent;
+          --button-hover-background: #e5e5e51a;
+          --button-border-radius: 4px;
+          --button-hover-color: #fff;
+
+          padding-left: 80px;
+          -webkit-app-region: drag;
+        }
+        .nav.project {
+          --tabgroup-background: #151515;
+          --tab-active-background: #151515;
+          --tab-background: #151515;
+        }
+
+        .views {
+          height: calc(100vh - 32px);
+        }
+        .tabs {
+          display: flex;
+        }
+        .tab-icon {
+          width: 16px;
+        }
+        .tab-icon:empty {
+          display: none;
+        }
+        .tab-title:empty {
+          display: none;
+        }
+        .tab-close {
+          opacity: 0;
+        }
+        .tab:hover .tab-close {
+          opacity: 1;
+        }
+        .tab-close:empty {
+          display: none;
+        }
+      </style>
+    </tab-group>
+
+    <script src="node_modules/electron-tabs/dist/electron-tabs.js"></script>
+    <script>
+      const tabGroup = document.querySelector("tab-group");
+
+      const home = tabGroup.addTab({
+        title: "",
+        src: "https://codesandbox.io/p/dashboard",
+        iconURL: "home.svg",
+        active: true,
+        closable: false,
+        webviewAttributes: {
+          allowpopups: true,
+          // webpreferences: "nativeWindowOpen=true",
+        },
+      });
+
+      home.webview.addEventListener("new-window", (event) => {
+        const url = event.url;
+
+        if (url.includes("https://codesandbox.io/p/github/")) {
+          tabGroup.addTab({
+            src: url,
+            title: "Loading...",
+            active: true,
+            ready(tab) {
+              tab.webview.addEventListener("did-stop-loading", (foo) => {
+                tab.setTitle(
+                  tab.webview
+                    .getTitle()
+                    .replace(" - CodeSandbox", "")
+                    .replace("CodeSandbox", "Loading...")
+                );
+
+                const openTabs = JSON.parse(localStorage["windows"]);
+                const updateIndex = openTabs.findIndex(
+                  (item) => item.id === tab.id
+                );
+
+                const src = tab.webviewAttributes.src;
+
+                if (updateIndex > -1) {
+                  openTabs[updateIndex] = {
+                    id: tab.id,
+                    src,
+                    title: tab.title,
+                  };
+
+                  localStorage["windows"] = JSON.stringify(openTabs);
+
+                  return;
+                }
+
+                localStorage["windows"] = JSON.stringify([
+                  ...openTabs,
+                  { id: tab.id, src, title: tab.title },
+                ]);
+              });
+            },
+          });
+        }
+
+        // TODO
+        event.defaultPrevented = true;
+        event.preventDefault();
+      });
+
+      try {
+        const openTabs = JSON.parse(localStorage["windows"]);
+        openTabs.forEach((tab) => {
+          tabGroup.addTab(tab);
+        });
+      } catch {
+        //
+      }
+
+      tabGroup.on("tab-removed", (tab) => {
+        const openTabs = JSON.parse(localStorage["windows"]);
+
+        localStorage["windows"] = JSON.stringify(
+          openTabs.filter((item) => item.id !== tab.id)
+        );
+      });
+
+      tabGroup.on("tab-active", (tab, tabGroup) => {
+        const nav = tabGroup.shadowRoot.querySelector(".nav");
+        if (
+          tab.webviewAttributes.src.includes("https://codesandbox.io/p/github/")
+        ) {
+          nav.classList.add("project");
+        } else {
+          nav.classList.remove("project");
+        }
+      });
+    </script>
+  </body>
+</html>
