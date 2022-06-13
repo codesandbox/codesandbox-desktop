@@ -77,6 +77,9 @@
             src: url,
             title: "Loading...",
             active: true,
+            webviewAttributes: {
+              allowpopups: true,
+            },
             ready(tab) {
               tab.webview.addEventListener("did-stop-loading", (foo) => {
                 tab.setTitle(
@@ -121,8 +124,15 @@
 
       try {
         const openTabs = JSON.parse(localStorage["windows"]);
-        openTabs.forEach((tab) => {
-          tabGroup.addTab(tab);
+        openTabs.forEach((item) => {
+          const tab = tabGroup.addTab({
+            ...item,
+            webviewAttributes: {
+              allowpopups: true,
+            },
+          });
+
+          tab.webview.addEventListener("new-window", (event) => {});
         });
       } catch {
         //
