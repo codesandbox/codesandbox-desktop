@@ -1,11 +1,14 @@
-// main.js
-
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, screen, shell } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  screen: electronScreen,
+  shell,
+} = require("electron");
 const path = require("path");
 
 const createWindow = () => {
-  const primaryDisplay = screen.getPrimaryDisplay();
+  const primaryDisplay = electronScreen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
 
   // Create the browser window.
@@ -14,15 +17,13 @@ const createWindow = () => {
     height: height,
     titleBarStyle: "hidden",
     frame: false,
-    titleBarStyle: "hiddenInset",
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
       webviewTag: true,
     },
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile("index.html");
+  mainWindow.loadFile("./dist/index.html");
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
