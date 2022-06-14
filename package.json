@@ -6,7 +6,7 @@
   "author": "Jane Doe",
   "license": "MIT",
   "scripts": {
-    "start": "electron .",
+    "start": "NODE_ENV=development electron .",
     "app:dir": "electron-builder --dir",
     "app:dist": "electron-builder"
   },

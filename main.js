@@ -24,6 +24,14 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadFile("index.html");
 
+  app.on("web-contents-created", (createEvent, contents) => {
+    contents.addListener("new-window", (newEvent) => {
+      console.log("Blocked by 'new-window'");
+      if (url.includes("https://codesandbox.io/p/github/")) {
+        newEvent.preventDefault();
+      }
+    });
+  });
   if (process.env.NODE_ENV === "development") {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
