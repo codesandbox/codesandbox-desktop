@@ -57,6 +57,14 @@
     <script>
       const tabGroup = document.querySelector("tab-group");
 
+      const getTabs = () => {
+        try {
+          return JSON.parse(localStorage["windows"]);
+        } catch (e) {
+          return [];
+        }
+      };
+
       const home = tabGroup.addTab({
         title: "",
         src: "https://codesandbox.io/p/dashboard",
@@ -89,7 +97,7 @@
                     .replace("CodeSandbox", "Loading...")
                 );
 
-                const openTabs = JSON.parse(localStorage["windows"]);
+                const openTabs = getTabs();
                 const updateIndex = openTabs.findIndex(
                   (item) => item.id === tab.id
                 );
@@ -119,7 +127,7 @@
       });
 
       try {
-        const openTabs = JSON.parse(localStorage["windows"]);
+        const openTabs = getTabs();
         openTabs.forEach((item) => {
           const tab = tabGroup.addTab({
             ...item,
@@ -135,7 +143,7 @@
       }
 
       tabGroup.on("tab-removed", (tab) => {
-        const openTabs = JSON.parse(localStorage["windows"]);
+        const openTabs = getTabs();
 
         localStorage["windows"] = JSON.stringify(
           openTabs.filter((item) => item.id !== tab.id)

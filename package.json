@@ -21,7 +21,13 @@
     "appId": "com.electron.codesandbox",
     "productName": "CodeSandbox",
     "mac": {
-      "icon": "./icon.png"
+      "icon": "./icon.png",
+      "target": [
+        {
+          "target": "default",
+          "arch": "universal"
+        }
+      ]
     }
   }
 }
