@@ -26,6 +26,8 @@ const createWindow = () => {
     titleBarStyle: "hidden",
     frame: false,
     webPreferences: {
+      // Performance improvement? https://stackoverflow.com/questions/45156262/nodejs-electron-renders-pages-slower-than-chrome
+      sandbox: true,
       webviewTag: true,
       nodeIntegration: true,
       contextIsolation: false,
