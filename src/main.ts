@@ -35,7 +35,7 @@ const createWindow = () => {
   mainWindowState.manage(mainWindow);
 
   // and load the index.html of the app.
-  mainWindow.loadFile("./dist/index.html");
+  mainWindow.loadFile("./assets/index.html");
 
   if (process.env.NODE_ENV === "development") {
     // Open the DevTools.
@@ -45,8 +45,13 @@ const createWindow = () => {
   app.on("web-contents-created", (createEvent, webContents) => {
     const allowedExternalUrls = [".preview.csb.app", "github.com"];
     const deniedURls = ["https://codesandbox.io/p/github/"];
+    const exceptions = [".preview.csb.app/auth/dev"];
 
     webContents.setWindowOpenHandler(({ url }) => {
+      if (exceptions.find((allowedUrl) => url.includes(allowedUrl))) {
+        return { action: "allow" };
+      }
+
       if (allowedExternalUrls.find((allowedUrl) => url.includes(allowedUrl))) {
         shell.openExternal(url);
 
