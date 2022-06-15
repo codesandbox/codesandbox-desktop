@@ -1,9 +1,9 @@
 {
   "name": "codesandbox",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Hello World!",
   "main": "src/main.ts",
-  "author": "Jane Doe",
+  "author": "CodeSandbox",
   "license": "MIT",
   "scripts": {
     "start": "yarn build:view:watch",
