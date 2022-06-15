@@ -18,6 +18,8 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       webviewTag: true,
+      // Performance improvement? https://stackoverflow.com/questions/45156262/nodejs-electron-renders-pages-slower-than-chrome
+      sandbox: true,
     },
   });
 
@@ -25,8 +27,7 @@ const createWindow = () => {
   mainWindow.loadFile("index.html");
 
   app.on("web-contents-created", (createEvent, contents) => {
-    contents.addListener("new-window", (newEvent) => {
-      console.log("Blocked by 'new-window'");
+    contents.addListener("new-window", (newEvent, url) => {
       if (url.includes("https://codesandbox.io/p/github/")) {
         newEvent.preventDefault();
       }
