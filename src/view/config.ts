@@ -1,3 +1,3 @@
-export const URL = {
+export const urls = {
   dashboard: "https://codesandbox.io/p/dashboard",
 };

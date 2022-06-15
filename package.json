@@ -1,19 +1,25 @@
 {
-  "name": "my-electron-app",
+  "name": "codesandbox",
   "version": "1.0.0",
   "description": "Hello World!",
   "main": "src/main.ts",
   "author": "Jane Doe",
   "license": "MIT",
   "scripts": {
-    "start": "webpack watch --config ./start.js",
-    "electron": "electron ."
+    "start": "yarn build:watch",
+    "===": "===",
+    "build": "webpack build --config ./start.js",
+    "build:watch": "webpack watch --config ./start.js",
+    "app:server": "NODE_ENV=development electron .",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder"
   },
   "dependencies": {
-    "electron": "^19.0.3",
     "electron-tabs": "^1.0.1"
   },
   "devDependencies": {
+    "electron": "^19.0.3",
+    "electron-builder": "^23.0.3",
     "file-loader": "^6.2.0",
     "html-loader": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
@@ -22,5 +28,12 @@
     "url-loader": "^4.1.1",
     "webpack": "^5.73.0",
     "webpack-cli": "^4.10.0"
+  },
+  "build": {
+    "appId": "com.electron.codesandbox",
+    "productName": "CodeSandbox",
+    "mac": {
+      "icon": "./icon.png"
+    }
   }
 }

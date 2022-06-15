@@ -25,8 +25,39 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadFile("./dist/index.html");
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV === "development") {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+  }
+
+  app.on("web-contents-created", (createEvent, contents) => {
+    const allowedExternalUrls = [".preview.csb.app", "github.com"];
+
+    // contents.on("new-window", (newEvent) => {
+    //   console.log("Blocked by 'new-window'", newEvent.url);
+    //   newEvent.preventDefault();
+    // });
+
+    // contents.on("will-navigate", (newEvent) => {
+    //   console.log("Blocked by 'will-navigate'", newEvent);
+    //   newEvent.preventDefault();
+    // });
+
+    contents.setWindowOpenHandler(({ url }) => {
+      if (allowedExternalUrls.find((allowedUrl) => url.includes(allowedUrl))) {
+        shell.openExternal(url);
+
+        return { action: "deny" };
+      }
+
+      return { action: "allow" };
+    });
+  });
+
+  // mainWindow.webContents.setWindowOpenHandler((details) => {
+  //   console.log(details);
+  //   return { action: "allow" };
+  // });
 };
 
 // This method will be called when Electron has finished
