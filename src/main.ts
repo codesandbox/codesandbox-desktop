@@ -1,42 +1,72 @@
-// main.js
-
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, screen, shell } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  screen: electronScreen,
+  shell,
+} = require("electron");
 const path = require("path");
+const windowStateKeeper = require("electron-window-state");
 
 const createWindow = () => {
-  const primaryDisplay = screen.getPrimaryDisplay();
+  const primaryDisplay = electronScreen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
+
+  let mainWindowState = windowStateKeeper({
+    defaultWidth: width,
+    defaultHeight: height,
+  });
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: width,
-    height: height,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     titleBarStyle: "hidden",
     frame: false,
-    titleBarStyle: "hiddenInset",
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
       webviewTag: true,
-      // Performance improvement? https://stackoverflow.com/questions/45156262/nodejs-electron-renders-pages-slower-than-chrome
-      sandbox: true,
+      nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadFile("index.html");
+  mainWindowState.manage(mainWindow);
 
-  app.on("web-contents-created", (createEvent, contents) => {
-    contents.addListener("new-window", (newEvent, url) => {
-      if (url.includes("https://codesandbox.io/p/github/")) {
-        newEvent.preventDefault();
-      }
-    });
-  });
+  // and load the index.html of the app.
+  mainWindow.loadFile("./assets/index.html");
+
   if (process.env.NODE_ENV === "development") {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
   }
+
+  app.on("web-contents-created", (createEvent, webContents) => {
+    const allowedExternalUrls = [".preview.csb.app", "github.com"];
+    const deniedURls = ["https://codesandbox.io/p/github/"];
+    const exceptions = [".preview.csb.app/auth/dev"];
+
+    webContents.setWindowOpenHandler(({ url }) => {
+      if (exceptions.find((allowedUrl) => url.includes(allowedUrl))) {
+        return { action: "allow" };
+      }
+
+      if (allowedExternalUrls.find((allowedUrl) => url.includes(allowedUrl))) {
+        shell.openExternal(url);
+
+        return { action: "deny" };
+      }
+
+      if (deniedURls.find((allowedUrl) => url.includes(allowedUrl))) {
+        mainWindow.webContents.send("open-tab", url);
+
+        return { action: "deny" };
+      }
+
+      return { action: "allow" };
+    });
+  });
 };
 
 // This method will be called when Electron has finished

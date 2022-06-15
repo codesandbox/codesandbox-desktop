@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <body style="background: #0f0e0e; margin: 0">
+    <tab-group sortable="true">
+      <style>
+        .nav {
+          --tabgroup-background: #0f0e0e;
+          --tab-active-background: #0f0e0e;
+          --tab-background: #0f0e0e;
+          --tab-active-color: #fff;
+          --tab-hover-color: #fff;
+          --tab-border-color: transparent;
+          --button-hover-background: #e5e5e51a;
+          --button-border-radius: 4px;
+          --button-hover-color: #fff;
+
+          padding-left: 80px;
+          -webkit-app-region: drag;
+        }
+        .nav.project {
+          --tabgroup-background: #151515;
+          --tab-active-background: #151515;
+          --tab-background: #151515;
+        }
+
+        .views {
+          height: calc(100vh - 32px);
+        }
+        .tabs {
+          display: flex;
+        }
+        .tab {
+          -webkit-app-region: no-drag;
+        }
+        .tab-icon {
+          width: 24px;
+        }
+        .tab-icon img {
+          width: 24px;
+          height: 24px;
+        }
+
+        .tab-icon:empty {
+          display: none;
+        }
+        .tab-title {
+          margin-left: 0;
+        }
+        .tab-title:empty {
+          display: none;
+        }
+        .tab-close {
+          opacity: 0;
+        }
+        .tab:hover .tab-close {
+          opacity: 1;
+        }
+        .tab-close:empty {
+          display: none;
+        }
+      </style>
+    </tab-group>
+  </body>
+</html>
