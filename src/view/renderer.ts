@@ -25,10 +25,7 @@ const setupTabs = () => {
    * Recover open tabs
    */
   storage.get().forEach((item) => {
-    const tab = tabGroup.addTab({
-      webviewAttributes: { allowpopups: true },
-      ...item,
-    });
+    const tab = tabGroup.addTab(item);
 
     if (item.active) {
       toggleBackgroundColor(tabGroup, tab);
@@ -40,7 +37,7 @@ const setupTabs = () => {
    */
   ipcRenderer.on("open-tab", (event, url) => {
     tabGroup.addTab({
-      webviewAttributes: { allowpopups: true },
+      webviewAttributes: { allowpopups: true, id: new Date().getTime() },
       title: "Loading...",
       active: true,
       src: url,
@@ -48,8 +45,8 @@ const setupTabs = () => {
         storage.add({
           active: true,
           src: url,
-          id: tab.id,
           title: tab.title,
+          webviewAttributes: tab.webviewAttributes as any,
         });
 
         /**
@@ -67,8 +64,7 @@ const setupTabs = () => {
 
           tab.setTitle(title);
 
-          storage.update({
-            id: tab.id,
+          storage.update(tab.webviewAttributes.id, {
             title: tab.title,
           });
         });
@@ -80,7 +76,7 @@ const setupTabs = () => {
    * Close tab
    */
   tabGroup.on("tab-removed", (tab) => {
-    storage.delete(tab.id);
+    storage.delete(tab.webviewAttributes.id);
   });
 
   /**
@@ -88,7 +84,7 @@ const setupTabs = () => {
    */
   tabGroup.on("tab-active", (tab) => {
     toggleBackgroundColor(tabGroup, tab);
-    storage.update({ id: tab.id, active: true });
+    storage.update(tab.webviewAttributes.id, { active: true });
   });
 };
 

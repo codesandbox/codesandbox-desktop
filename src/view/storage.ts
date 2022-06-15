@@ -1,4 +1,9 @@
-type Values = { id: number; src: string; title: string; active: boolean };
+type Values = {
+  webviewAttributes: { id: number };
+  src: string;
+  title: string;
+  active: boolean;
+};
 
 class Storage {
   constructor() {
@@ -7,9 +12,11 @@ class Storage {
     }
   }
 
-  update(data: Partial<Values>) {
+  update(id: number, data: Partial<Values>) {
     let current = this.get();
-    const updateIndex = current.findIndex((item) => item.id === data.id);
+    const updateIndex = current.findIndex(
+      (item) => item.webviewAttributes.id === id
+    );
 
     if (updateIndex > -1) {
       current[updateIndex] = { ...current[updateIndex], ...data };
@@ -19,7 +26,7 @@ class Storage {
     if (data.active) {
       current = current.map((item) => ({
         ...item,
-        active: item.id === data.id,
+        active: item.webviewAttributes.id === id,
       }));
     }
 
@@ -28,7 +35,7 @@ class Storage {
 
   delete(id: number) {
     const current = this.get();
-    this.set(current.filter((item) => item.id !== id));
+    this.set(current.filter((item) => item.webviewAttributes.id !== id));
   }
 
   add(data: Values) {
