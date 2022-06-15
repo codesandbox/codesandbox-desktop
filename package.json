@@ -15,7 +15,8 @@
     "app:dist": "electron-builder"
   },
   "dependencies": {
-    "electron-tabs": "^1.0.1"
+    "electron-tabs": "^1.0.1",
+    "electron-window-state": "^5.0.3"
   },
   "devDependencies": {
     "electron": "^19.0.3",
@@ -33,7 +34,13 @@
     "appId": "com.electron.codesandbox",
     "productName": "CodeSandbox",
     "mac": {
-      "icon": "./icon.png"
+      "icon": "./icon.png",
+      "target": [
+        {
+          "target": "default",
+          "arch": "universal"
+        }
+      ]
     }
   }
 }

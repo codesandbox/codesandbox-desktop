@@ -4,17 +4,26 @@ const {
   BrowserWindow,
   screen: electronScreen,
   shell,
+  session,
 } = require("electron");
 const path = require("path");
+const windowStateKeeper = require("electron-window-state");
 
 const createWindow = () => {
   const primaryDisplay = electronScreen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
 
+  let mainWindowState = windowStateKeeper({
+    defaultWidth: width,
+    defaultHeight: height,
+  });
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: width,
-    height: height,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     titleBarStyle: "hidden",
     frame: false,
     webPreferences: {
@@ -24,6 +33,8 @@ const createWindow = () => {
     },
   });
 
+  mainWindowState.manage(mainWindow);
+
   // and load the index.html of the app.
   mainWindow.loadFile("./dist/index.html");
 
@@ -32,21 +43,32 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools();
   }
 
-  app.on("web-contents-created", (createEvent, contents) => {
+  app.on("web-contents-created", (createEvent, webContents) => {
     const allowedExternalUrls = [".preview.csb.app", "github.com"];
     const deniedURls = ["https://codesandbox.io/p/github/"];
 
-    // contents.on("new-window", (newEvent) => {
-    //   console.log("Blocked by 'new-window'", newEvent.url);
-    //   newEvent.preventDefault();
+    // webContents.on("will-navigate", (event, ...rest) => {
+    //   console.log(rest);
+    //   if (deniedURls.find((allowedUrl) => event.url.includes(allowedUrl))) {
+    //     mainWindow.webContents.send("open-tab", event.url);
+    //   }
+
+    //   event.preventDefault();
     // });
 
-    // contents.on("will-navigate", (newEvent) => {
-    //   console.log("Blocked by 'will-navigate'", newEvent);
-    //   newEvent.preventDefault();
+    // webContents.on("did-navigate", (event, url) => {
+    //   console.log("did-navigate");
+    //   console.log(
+    //     url,
+    //     deniedURls.find((allowedUrl) => url.includes(allowedUrl))
+    //   );
+    //   // if (deniedURls.find((allowedUrl) => url.includes(allowedUrl))) {
+    //   //   mainWindow.webContents.send("open-tab", url);
+    //   event.preventDefault();
+    //   // }
     // });
 
-    contents.setWindowOpenHandler(({ url }) => {
+    webContents.setWindowOpenHandler(({ url }) => {
       if (allowedExternalUrls.find((allowedUrl) => url.includes(allowedUrl))) {
         shell.openExternal(url);
 
@@ -62,11 +84,6 @@ const createWindow = () => {
       return { action: "allow" };
     });
   });
-
-  // mainWindow.webContents.setWindowOpenHandler((details) => {
-  //   console.log(details);
-  //   return { action: "allow" };
-  // });
 };
 
 // This method will be called when Electron has finished

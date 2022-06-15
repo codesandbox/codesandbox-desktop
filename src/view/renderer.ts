@@ -5,6 +5,12 @@ import { ipcRenderer } from "electron";
 import { storage } from "./storage";
 import { toggleBackgroundColor } from "./helpers";
 
+const defaultTabConfig = {
+  webviewAttributes: {
+    allowpopups: true,
+  },
+};
+
 const tabGroup = document.querySelector("tab-group") as TabGroup;
 
 const setupTabs = () => {
@@ -12,15 +18,13 @@ const setupTabs = () => {
    * Dashboard
    */
   tabGroup.addTab({
+    ...defaultTabConfig,
     title: "",
     src: urls.dashboard,
     iconURL:
       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='35px' height='24px' viewBox='0 0 452 452'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0 452h452V0H0v452zm405.773-46.227V46.227H46.227v359.546h359.546z' fill='%23ffffff'%3E%3C/path%3E%3C/svg%3E",
     active: true,
     closable: false,
-    webviewAttributes: {
-      allowpopups: true,
-    },
   });
 
   /**
@@ -28,10 +32,8 @@ const setupTabs = () => {
    */
   storage.get().forEach((item) => {
     const tab = tabGroup.addTab({
+      ...defaultTabConfig,
       ...item,
-      webviewAttributes: {
-        allowpopups: true,
-      },
     });
 
     if (item.active) {
@@ -44,10 +46,10 @@ const setupTabs = () => {
    */
   ipcRenderer.on("open-tab", (event, url) => {
     tabGroup.addTab({
+      ...defaultTabConfig,
       title: "Loading...",
       active: true,
       src: url,
-      webviewAttributes: { allowpopups: true },
       ready(tab) {
         storage.add({
           active: true,
@@ -90,7 +92,7 @@ const setupTabs = () => {
   /**
    * Update active and background color
    */
-  tabGroup.on("tab-active", (tab, tabGroup) => {
+  tabGroup.on("tab-active", (tab) => {
     toggleBackgroundColor(tabGroup, tab);
     storage.update({ id: tab.id, active: true });
   });
