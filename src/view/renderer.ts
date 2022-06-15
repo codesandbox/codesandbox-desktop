@@ -5,12 +5,6 @@ import { ipcRenderer } from "electron";
 import { storage } from "./storage";
 import { toggleBackgroundColor } from "./helpers";
 
-const defaultTabConfig = {
-  webviewAttributes: {
-    allowpopups: true,
-  },
-};
-
 const tabGroup = document.querySelector("tab-group") as TabGroup;
 
 const setupTabs = () => {
@@ -18,7 +12,7 @@ const setupTabs = () => {
    * Dashboard
    */
   tabGroup.addTab({
-    ...defaultTabConfig,
+    webviewAttributes: { allowpopups: true },
     title: "",
     src: urls.dashboard,
     iconURL:
@@ -32,7 +26,7 @@ const setupTabs = () => {
    */
   storage.get().forEach((item) => {
     const tab = tabGroup.addTab({
-      ...defaultTabConfig,
+      webviewAttributes: { allowpopups: true },
       ...item,
     });
 
@@ -46,7 +40,7 @@ const setupTabs = () => {
    */
   ipcRenderer.on("open-tab", (event, url) => {
     tabGroup.addTab({
-      ...defaultTabConfig,
+      webviewAttributes: { allowpopups: true },
       title: "Loading...",
       active: true,
       src: url,

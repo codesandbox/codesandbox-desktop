@@ -6,11 +6,11 @@
   "author": "Jane Doe",
   "license": "MIT",
   "scripts": {
-    "start": "yarn build:watch",
+    "start": "yarn build:view:watch",
+    "server": "NODE_ENV=development electron .",
     "===": "===",
-    "build": "webpack build --config ./start.js",
-    "build:watch": "webpack watch --config ./start.js",
-    "app:server": "NODE_ENV=development electron .",
+    "build:view": "webpack build --mode=production --config ./start.js",
+    "build:view:watch": "webpack --mode=development watch --config ./start.js",
     "app:dir": "electron-builder --dir",
     "app:dist": "electron-builder"
   },

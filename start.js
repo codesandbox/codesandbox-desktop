@@ -1,7 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  mode: "development",
   entry: "./src/view/renderer.ts",
   target: "electron-renderer",
   plugins: [

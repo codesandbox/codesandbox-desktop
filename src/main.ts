@@ -4,7 +4,6 @@ const {
   BrowserWindow,
   screen: electronScreen,
   shell,
-  session,
 } = require("electron");
 const path = require("path");
 const windowStateKeeper = require("electron-window-state");
@@ -46,27 +45,6 @@ const createWindow = () => {
   app.on("web-contents-created", (createEvent, webContents) => {
     const allowedExternalUrls = [".preview.csb.app", "github.com"];
     const deniedURls = ["https://codesandbox.io/p/github/"];
-
-    // webContents.on("will-navigate", (event, ...rest) => {
-    //   console.log(rest);
-    //   if (deniedURls.find((allowedUrl) => event.url.includes(allowedUrl))) {
-    //     mainWindow.webContents.send("open-tab", event.url);
-    //   }
-
-    //   event.preventDefault();
-    // });
-
-    // webContents.on("did-navigate", (event, url) => {
-    //   console.log("did-navigate");
-    //   console.log(
-    //     url,
-    //     deniedURls.find((allowedUrl) => url.includes(allowedUrl))
-    //   );
-    //   // if (deniedURls.find((allowedUrl) => url.includes(allowedUrl))) {
-    //   //   mainWindow.webContents.send("open-tab", url);
-    //   event.preventDefault();
-    //   // }
-    // });
 
     webContents.setWindowOpenHandler(({ url }) => {
       if (allowedExternalUrls.find((allowedUrl) => url.includes(allowedUrl))) {
