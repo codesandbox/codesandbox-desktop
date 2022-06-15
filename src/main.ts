@@ -19,6 +19,8 @@ const createWindow = () => {
     frame: false,
     webPreferences: {
       webviewTag: true,
+      nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 
@@ -32,6 +34,7 @@ const createWindow = () => {
 
   app.on("web-contents-created", (createEvent, contents) => {
     const allowedExternalUrls = [".preview.csb.app", "github.com"];
+    const deniedURls = ["https://codesandbox.io/p/github/"];
 
     // contents.on("new-window", (newEvent) => {
     //   console.log("Blocked by 'new-window'", newEvent.url);
@@ -46,6 +49,12 @@ const createWindow = () => {
     contents.setWindowOpenHandler(({ url }) => {
       if (allowedExternalUrls.find((allowedUrl) => url.includes(allowedUrl))) {
         shell.openExternal(url);
+
+        return { action: "deny" };
+      }
+
+      if (deniedURls.find((allowedUrl) => url.includes(allowedUrl))) {
+        mainWindow.webContents.send("open-tab", url);
 
         return { action: "deny" };
       }

@@ -1,4 +1,4 @@
-type Values = { id: string; src: string; title: string; active: boolean };
+type Values = { id: number; src: string; title: string; active: boolean };
 
 class Storage {
   constructor() {
@@ -7,18 +7,26 @@ class Storage {
     }
   }
 
-  update(data: Values) {
-    const current = this.get();
+  update(data: Partial<Values>) {
+    let current = this.get();
     const updateIndex = current.findIndex((item) => item.id === data.id);
 
     if (updateIndex > -1) {
-      current[updateIndex] = data;
-
-      this.set(current);
+      current[updateIndex] = { ...current[updateIndex], ...data };
     }
+
+    // Toggle active value
+    if (data.active) {
+      current = current.map((item) => ({
+        ...item,
+        active: item.id === data.id,
+      }));
+    }
+
+    this.set(current);
   }
 
-  delete(id: string) {
+  delete(id: number) {
     const current = this.get();
     this.set(current.filter((item) => item.id !== id));
   }

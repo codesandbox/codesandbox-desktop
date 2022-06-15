@@ -1,11 +1,17 @@
-import type { TabGroup } from "electron-tabs";
+import type { TabGroup, Tab } from "electron-tabs";
 import "electron-tabs";
 import { urls } from "./config";
+import { ipcRenderer } from "electron";
+import { storage } from "./storage";
+import { toggleBackgroundColor } from "./helpers";
 
 const tabGroup = document.querySelector("tab-group") as TabGroup;
 
 const setupTabs = () => {
-  const home = tabGroup.addTab({
+  /**
+   * Dashboard
+   */
+  tabGroup.addTab({
     title: "",
     src: urls.dashboard,
     iconURL:
@@ -17,13 +23,76 @@ const setupTabs = () => {
     },
   });
 
-  tabGroup.addTab({
-    title: "foo",
-    active: true,
-    webviewAttributes: {
-      allowpopups: true,
-    },
-    src: "https://codesandbox.io/p/github/codesandbox/codesandbox-applications/main",
+  /**
+   * Recover open tabs
+   */
+  storage.get().forEach((item) => {
+    const tab = tabGroup.addTab({
+      ...item,
+      webviewAttributes: {
+        allowpopups: true,
+      },
+    });
+
+    if (item.active) {
+      toggleBackgroundColor(tabGroup, tab);
+    }
+  });
+
+  /**
+   * New tabs from dashboard
+   */
+  ipcRenderer.on("open-tab", (event, url) => {
+    tabGroup.addTab({
+      title: "Loading...",
+      active: true,
+      src: url,
+      webviewAttributes: { allowpopups: true },
+      ready(tab) {
+        storage.add({
+          active: true,
+          src: url,
+          id: tab.id,
+          title: tab.title,
+        });
+
+        /**
+         * Update title
+         */
+        const view = tab.webview as unknown as Tab;
+        view.addEventListener("did-stop-loading", () => {
+          let title = view.getTitle();
+
+          if (title === "CodeSandbox") {
+            title = "Loading...";
+          } else {
+            title = title.replace(" - CodeSandbox", "");
+          }
+
+          tab.setTitle(title);
+
+          storage.update({
+            id: tab.id,
+            title: tab.title,
+          });
+        });
+      },
+    });
+  });
+
+  /**
+   * Close tab
+   */
+  tabGroup.on("tab-removed", (tab) => {
+    storage.delete(tab.id);
+  });
+
+  /**
+   * Update active and background color
+   */
+  tabGroup.on("tab-active", (tab, tabGroup) => {
+    toggleBackgroundColor(tabGroup, tab);
+    storage.update({ id: tab.id, active: true });
   });
 };
 
