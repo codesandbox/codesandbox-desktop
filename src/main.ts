@@ -4,6 +4,7 @@ const {
   BrowserWindow,
   screen: electronScreen,
   shell,
+  globalShortcut,
 } = require("electron");
 const path = require("path");
 const windowStateKeeper = require("electron-window-state");
@@ -66,6 +67,14 @@ const createWindow = () => {
 
       return { action: "allow" };
     });
+  });
+
+  /**
+   * Disable command + w
+   */
+  globalShortcut.register("CommandOrControl+W", () => {
+    // Pass action to the view layer
+    mainWindow.webContents.send("close-file");
   });
 };
 

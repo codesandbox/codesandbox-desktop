@@ -80,6 +80,17 @@ const setupTabs = () => {
   });
 
   /**
+   * Close file
+   */
+  ipcRenderer.addListener("close-file", () => {
+    const iframe = tabGroup
+      .getActiveTab()
+      .webview.shadowRoot.querySelector("iframe");
+
+    iframe.contentWindow.postMessage("__external__EDITOR-CLOSE_TABS", "*");
+  });
+
+  /**
    * Update active and background color
    */
   tabGroup.on("tab-active", (tab) => {
