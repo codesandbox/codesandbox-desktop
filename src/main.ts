@@ -72,9 +72,9 @@ const createWindow = () => {
   /**
    * Disable command + w
    */
-  globalShortcut.register("CommandOrControl+W", () => {
-    // Pass action to the view layer
+  mainWindow.on("close", (event) => {
     mainWindow.webContents.send("close-file");
+    event.preventDefault();
   });
 };
 
