@@ -25,9 +25,10 @@ const createWindow = () => {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    titleBarStyle: "hidden",
+    titleBarStyle: "customButtonsOnHover",
     trafficLightPosition: { x: 10, y: 10 },
     frame: false,
+    autoHideMenuBar: true,
     webPreferences: {
       webviewTag: true,
       nodeIntegration: true,
