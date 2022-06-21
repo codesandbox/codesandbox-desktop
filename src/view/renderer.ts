@@ -27,9 +27,39 @@ const setupTabs = () => {
   storage.get().forEach((item) => {
     const tab = tabGroup.addTab(item);
 
+    const view = tab.webview as unknown as Tab & { src: string };
+
     if (item.active) {
       toggleBackgroundColor(tabGroup, tab);
     }
+
+    /**
+     * Update URL
+     */
+    view.addEventListener("did-navigate-in-page", () => {
+      storage.update(tab.webviewAttributes.id, {
+        src: view.src,
+      });
+    });
+
+    /**
+     * Update title
+     */
+    view.addEventListener("did-stop-loading", () => {
+      let title = view.getTitle();
+
+      if (title === "CodeSandbox") {
+        title = "Loading...";
+      } else {
+        title = title.replace(" - CodeSandbox", "");
+      }
+
+      tab.setTitle(title);
+
+      storage.update(tab.webviewAttributes.id, {
+        title: tab.title,
+      });
+    });
   });
 
   /**
@@ -77,6 +107,13 @@ const setupTabs = () => {
    */
   tabGroup.on("tab-removed", (tab) => {
     storage.delete(tab.webviewAttributes.id);
+  });
+
+  /**
+   * Close Tab
+   */
+  ipcRenderer.addListener("close-tab", () => {
+    tabGroup.getActiveTab().close(true);
   });
 
   /**

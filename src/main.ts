@@ -5,6 +5,7 @@ const {
   screen: electronScreen,
   shell,
   globalShortcut,
+  Menu,
 } = require("electron");
 const path = require("path");
 const windowStateKeeper = require("electron-window-state");
@@ -72,10 +73,42 @@ const createWindow = () => {
   /**
    * Disable command + w
    */
-  mainWindow.on("close", (event) => {
-    mainWindow.webContents.send("close-file");
-    event.preventDefault();
-  });
+  const menu = Menu.buildFromTemplate([
+    {
+      label: app.name,
+      submenu: [
+        { role: "about" },
+        { type: "separator" },
+        { role: "services" },
+        { type: "separator" },
+        { role: "hide" },
+        { role: "hideOthers" },
+        { role: "unhide" },
+        { type: "separator" },
+        {
+          label: "Close tab",
+          accelerator: "CommandOrControl+Shift+W",
+          click: () => {
+            mainWindow.webContents.send("close-tab");
+          },
+        },
+        { role: "quit" },
+      ],
+    },
+    {
+      role: "fileMenu",
+      submenu: [
+        {
+          label: "Close file",
+          accelerator: "CommandOrControl+W",
+          click: () => {
+            mainWindow.webContents.send("close-file");
+          },
+        },
+      ],
+    },
+  ]);
+  Menu.setApplicationMenu(menu);
 };
 
 // This method will be called when Electron has finished
