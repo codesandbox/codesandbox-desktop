@@ -15,11 +15,16 @@ const setupTabs = () => {
     webviewAttributes: { allowpopups: true },
     title: "",
     src: urls.dashboard,
-    iconURL:
-      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='35px' height='24px' viewBox='0 0 452 452'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0 452h452V0H0v452zm405.773-46.227V46.227H46.227v359.546h359.546z' fill='%23ffffff'%3E%3C/path%3E%3C/svg%3E",
     active: true,
     closable: false,
   });
+
+  // Set icon
+  tabGroup
+    .getTabByPosition(0)
+    .element.querySelector(
+      ".tab-icon"
+    ).innerHTML = `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2.375 6.65587C2.375 6.35909 2.50682 6.07765 2.73482 5.88765L7.35982 2.03349C7.73066 1.72445 8.26934 1.72445 8.64018 2.03349L13.2652 5.88765C13.4932 6.07765 13.625 6.3591 13.625 6.65587V13.625C13.625 14.1773 13.1773 14.625 12.625 14.625H10.875C10.3227 14.625 9.875 14.1773 9.875 13.625V10.9375C9.875 10.3852 9.42728 9.9375 8.875 9.9375H7.125C6.57272 9.9375 6.125 10.3852 6.125 10.9375V13.625C6.125 14.1773 5.67728 14.625 5.125 14.625H3.375C2.82272 14.625 2.375 14.1773 2.375 13.625V6.65587Z" stroke="currentColor" stroke-linecap="round"></path></svg>`;
 
   /**
    * Recover open tabs

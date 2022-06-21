@@ -26,6 +26,7 @@ const createWindow = () => {
     width: mainWindowState.width,
     height: mainWindowState.height,
     titleBarStyle: "hidden",
+    trafficLightPosition: { x: 10, y: 10 },
     frame: false,
     webPreferences: {
       webviewTag: true,

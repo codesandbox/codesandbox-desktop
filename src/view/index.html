@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <body style="background: #0f0e0e; margin: 0">
+  <head>
+    <link rel="stylesheet" href="./main.css" />
+  </head>
+  <body>
     <tab-group sortable="true">
       <style>
         .nav {
           --tabgroup-background: #0f0e0e;
           --tab-active-background: #0f0e0e;
           --tab-background: #0f0e0e;
-          --tab-active-color: #fff;
-          --tab-hover-color: #fff;
+          --tab-color: #999999;
+          --tab-active-color: #e5e5e5;
+          --tab-hover-color: #c5c5c5;
           --tab-border-color: transparent;
           --button-hover-background: #e5e5e51a;
           --button-border-radius: 4px;
@@ -33,11 +37,12 @@
           -webkit-app-region: no-drag;
         }
         .tab-icon {
-          width: 24px;
+          width: 16px;
         }
-        .tab-icon img {
-          width: 24px;
-          height: 24px;
+
+        .tab-icon svg {
+          width: 16px;
+          height: 16px;
         }
 
         .tab-icon:empty {
