@@ -109,6 +109,9 @@ const createWindow = () => {
         },
       ],
     },
+    { role: "editMenu" },
+    { role: "viewMenu" },
+    { role: "windowMenu" },
   ]);
   Menu.setApplicationMenu(menu);
 };
