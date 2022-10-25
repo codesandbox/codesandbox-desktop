@@ -51,6 +51,14 @@ const createWindow = () => {
     const deniedURls = ["https://codesandbox.io/p/github/"];
     const exceptions = [".preview.csb.app/auth/dev"];
 
+    webContents.addListener("will-navigate", (event, url) => {
+      if (deniedURls.find((allowedUrl) => url.includes(allowedUrl))) {
+        mainWindow.webContents.send("open-tab", url);
+
+        event.preventDefault();
+      }
+    });
+
     webContents.setWindowOpenHandler(({ url }) => {
       if (exceptions.find((allowedUrl) => url.includes(allowedUrl))) {
         return { action: "allow" };
