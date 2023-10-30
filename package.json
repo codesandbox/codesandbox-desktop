@@ -20,7 +20,7 @@
     "electron-window-state": "^5.0.3"
   },
   "devDependencies": {
-    "electron": "^19.0.3",
+    "electron": "^22.3.25",
     "electron-builder": "^23.0.3",
     "file-loader": "^6.2.0",
     "html-loader": "^3.1.0",
